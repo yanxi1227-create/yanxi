@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>個人作品集網站</title>
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ===== 滑鼠 & 手機觸控藍色愛心 ===== */
+    .mouse-star {
+      position: absolute;
+      pointer-events: none;
+      user-select: none;
+      animation: starFade 0.8s linear forwards;
+    }
+
+    @keyframes starFade {
+      0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translate(-10px, -20px) scale(1.5);
+        opacity: 0;
+      }
+    }
+
+    /* Lightbox */
+    .lightbox {
+      display: none;
+      position: fixed;
+      z-index: 999;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      justify-content: center;
+      align-items: center;
+    }
+    .lightbox img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+    .lightbox .close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 40px;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="index.html">首頁</a>
+  <a href="works.html">作品</a>
+  <a href="about.html">關於我</a>
+</nav>
+
+<h1>個人作品集網站</h1>
+<h3>自我介紹</h3>
+<p>喜歡畫圖睡覺愛吃甜食的平凡人類</p>
+<p>聽說我的興趣是......</p>
+<img src="images/d7.png" class="hero-img" alt="首頁圖片">
+
+<!-- Lightbox -->
+<div id="lightbox" class="lightbox">
+  <span class="close">&times;</span>
+  <img id="lightbox-img" src="">
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  // ===== Lightbox 放大圖片 =====
+  const images = document.querySelectorAll('.work-img, .hero-img');
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightbox-img');
+  const closeBtn = document.querySelector('.close');
+
+  images.forEach(img => {
+    img.addEventListener('click', () => {
+      lightbox.style.display = 'flex';
+      lightboxImg.src = img.src;
+    });
+  });
+
+  closeBtn.addEventListener('click', () => lightbox.style.display = 'none');
+
+  lightbox.addEventListener('click', (e) => {
+    if(e.target === lightbox) lightbox.style.display = 'none';
+  });
+
+  // ===== 滑鼠 / 觸控藍色愛心 =====
+  const createHeart = (x, y) => {
+    const heart = document.createElement("span");
+    heart.classList.add("mouse-star");
+    heart.textContent = "💙";           // 藍色愛心
+    heart.style.left = x + "px";
+    heart.style.top = y + "px";
+    heart.style.fontSize = "22px";
+    document.body.appendChild(heart);
+
+    setTimeout(() => heart.remove(), 800);
+  };
+
+  let lastTime = 0;
+
+  // 桌機滑鼠
+  document.addEventListener("mousemove", (e) => {
+    const now = Date.now();
+    if(now - lastTime < 50) return;
+    lastTime = now;
+    createHeart(e.pageX, e.pageY);
+  });
+
+  // 手機觸控
+  document.addEventListener("touchmove", (e) => {
+    const now = Date.now();
+    if(now - lastTime < 50) return;
+    lastTime = now;
+    for(let touch of e.touches){
+      createHeart(touch.pageX, touch.pageY);
+    }
+  });
+
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  // ===== Lightbox 放大首頁圖片 =====
+  const heroImg = document.querySelector(".hero-img");
+  const lightbox = document.getElementById("lightbox");
+  const lightboxImg = document.getElementById("lightbox-img");
+  const closeBtn = document.querySelector(".close");
+
+  if(heroImg && lightbox && lightboxImg && closeBtn){
+    heroImg.addEventListener("click", () => {
+      lightbox.style.display = 'flex';
+      lightboxImg.src = heroImg.src;
+    });
+
+    closeBtn.addEventListener('click', () => lightbox.style.display = 'none');
+    lightbox.addEventListener('click', e => {
+      if(e.target === lightbox) lightbox.style.display = 'none';
+    });
+  }
+
+  // ===== 滑鼠 / 觸控藍色愛心 =====
+  const createHeart = (x, y) => {
+    const heart = document.createElement("span");
+    heart.className = "mouse-star";
+    heart.textContent = "💙";
+    heart.style.left = x + "px";
+    heart.style.top = y + "px";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 800);
+  };
+
+  let lastTime = 0;
+  document.addEventListener("mousemove", e => {
+    const now = Date.now();
+    if(now - lastTime < 50) return;
+    lastTime = now;
+    createHeart(e.pageX, e.pageY);
+  });
+
+  document.addEventListener("touchmove", e => {
+    const now = Date.now();
+    if(now - lastTime < 50) return;
+    lastTime = now;
+    for(let t of e.touches) createHeart(t.pageX, t.pageY);
+  });
+
+  // ===== 首頁標題跟隨滑鼠 =====
+  const title = document.querySelector("h1");
+  if(title){
+    document.addEventListener("mousemove", e => {
+      const centerX = window.innerWidth / 2;
+      const centerY = window.innerHeight / 2;
+      const dx = (e.clientX - centerX) / 20;
+      const dy = (e.clientY - centerY) / 20;
+      title.style.transform = `translate(${dx}px, ${dy}px)`;
+    });
+  }
+
+  // ===== 首頁光效 =====
+  const heroGlow = document.createElement("div");
+  heroGlow.style.position = "fixed";
+  heroGlow.style.width = "120px";
+  heroGlow.style.height = "120px";
+  heroGlow.style.borderRadius = "50%";
+  heroGlow.style.pointerEvents = "none";
+  heroGlow.style.background = "radial-gradient(circle, rgba(0,157,255,0.3) 0%, rgba(234,245,255,0) 70%)";
+  heroGlow.style.transform = "translate(-50%, -50%)";
+  heroGlow.style.zIndex = 9999;
+  document.body.appendChild(heroGlow);
+
+  document.addEventListener("mousemove", e => {
+    heroGlow.style.left = e.clientX + "px";
+    heroGlow.style.top = e.clientY + "px";
+  });
+
+  // ===== emoji 掉落效果 =====
+  setInterval(() => {
+    const drop = document.createElement("span");
+    drop.textContent = "💍"; // 可以換成其他 emoji
+    drop.style.position = "fixed";
+    drop.style.left = Math.random() * window.innerWidth + "px";
+    drop.style.top = "-30px";
+    drop.style.fontSize = Math.random()*24 + 12 + "px";
+    drop.style.opacity = Math.random();
+    drop.style.pointerEvents = "none";
+    drop.style.zIndex = 9999;
+    document.body.appendChild(drop);
+
+    let top = -30;
+    const fall = setInterval(() => {
+      top += 2;
+      drop.style.top = top + "px";
+      if(top > window.innerHeight){
+        drop.remove();
+        clearInterval(fall);
+      }
+    }, 16);
+  }, 500);
+
+  // ===== 首頁淡入 =====
+  document.body.style.opacity = 0;
+  document.body.style.transition = "opacity 1.5s ease-in";
+  window.addEventListener("load", () => {
+    document.body.style.opacity = 1;
+  });
+
+});
+</script>
+
+
+</body>
+</html>
